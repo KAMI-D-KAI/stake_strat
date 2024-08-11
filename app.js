@@ -131,52 +131,6 @@ class Game {
     }
 }
 
-function generateGameModes() {
-    const gameModes = [];
-
-    gameModes.push(new Game("Blackjack", cardEvent, 0.49, 2));
-    gameModes.push(new Game("Hilo", cardEvent, 0.49, 2));
-    gameModes.push(new Game("Diamonds", diamondEvent, 0.2, 5));
-    gameModes.push(new Game("Dice Roll", diceRollEvent, 0.495, 2, null, [50, true]));
-    gameModes.push(new Game("Limbo", limboEvent, 0.01, 100_000, null, [2]));
-
-    for (let rows = 8; rows <= 16; rows++) {
-        for (const risk of ["low", "medium", "high"]) {
-            gameModes.push(new Game("Plinko", plinkoEvent, 0.1, 1, null, [rows, risk]));
-        }
-    }
-
-    gameModes.push(new Game("Roulette", rouletteEvent, 0.49, 36));
-    
-    for (const risk of ["classic", "low", "medium", "high"]) {
-        gameModes.push(new Game("Keno", kenoEvent, 0.1, 2, null, [40]));
-    }
-
-    for (let totalMines = 1; totalMines <= 24; totalMines++) {
-        gameModes.push(new Game("Mines", minesEvent, 0.96, 1, null, [totalMines]));
-    }
-
-    for (const difficulty of ["easy", "medium", "hard", "expert", "master"]) {
-        for (let level = 1; level <= 9; level++) {
-            const multiplier = 1.31 + (0.66 * (level - 1));
-            gameModes.push(new Game("Dragon Tower", dragonTowerEvent, 1.0 / level, multiplier, null, [level, difficulty]));
-        }
-    }
-
-    for (const segments of [10, 20, 30, 40, 50]) {
-        for (const risk of ["low", "medium", "high"]) {
-            const winProbability = risk === "low" ? 0.1 : (risk === "medium" ? 0.05 : 0.01);
-            const multiplier = 1 / winProbability;
-            gameModes.push(new Game("Wheel", wheelEvent, winProbability, multiplier, null, [segments, risk]));
-        }
-    }
-
-    gameModes.push(new Game("Crash", crashEvent, 0.495, 2));
-    gameModes.push(new Game("Slide", slideEvent, 0.495, 2));
-
-    return gameModes;
-}
-
 class BettingStrategy {
     constructor(initialBalance, targetGoal) {
         this.balance = initialBalance;
@@ -233,6 +187,9 @@ class BettingStrategy {
     runSimulation() {
         while (this.balance < this.targetGoal && this.balance > 0) {
             const [game, betAmount] = this.suggestBet();
+
+            // Provide the strategy and bet details before asking for outcome
+            alert(`Playing: ${game.name}\nBet Amount: ${betAmount}\nExpected Multiplier: ${game.multiplier}\nWin Probability: ${game.winProbability}`);
 
             const outcome = confirm("Did you win? Press OK for Yes, Cancel for No.");
             const won = outcome;
